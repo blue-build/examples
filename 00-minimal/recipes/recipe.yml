@@ -1,0 +1,24 @@
+name: example/minimal
+description: minimal bluebuild example image
+base-image: ghcr.io/ublue-os/kinoite-main
+image-version: latest
+
+modules:
+
+  - type: rpm-ostree
+    install:
+      - micro
+      - zsh
+      - playerctl 
+    remove:
+      - firefox
+      - firefox-langpacks
+
+  - type: default-flatpaks
+    user:
+      install:
+        - org.mozilla.firefox
+        - org.kde.krita
+        - com.discordapp.Discord
+
+  - type: signing 
