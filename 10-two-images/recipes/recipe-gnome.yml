@@ -1,0 +1,20 @@
+name: example/two-images-gnome
+description: bluebuild example image
+base-image: ghcr.io/ublue-os/kinoite-main
+image-version: latest
+
+modules:
+  - from-file: common-modules.yml
+
+  - type: rpm-ostree
+    install:
+      - gnome-shell-extension-blur-my-shell
+      - gnome-shell-extension-appindicator
+
+  - type: default-flatpaks
+    user:
+      install:
+        - org.gnome.Boxes
+        - org.gnome.Evince
+        - org.gnome.FileRoller
+        - org.gnome.BreakTimer

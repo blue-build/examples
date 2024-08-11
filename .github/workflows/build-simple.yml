@@ -23,6 +23,12 @@ jobs:
           - folder: ./00-minimal
             file: recipe.yml
 
+          # 10-two-images
+          - folder: ./10-two-images
+            file: recipe-gnome.yml
+          - folder: ./10-two-images
+            file: recipe-kde.yml
+
     steps:
        # the build is fully handled by the reusable github action
       - name: Build Custom Image

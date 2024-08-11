@@ -1,0 +1,13 @@
+name: example/two-images-kde
+description: bluebuild example image
+base-image: ghcr.io/ublue-os/kinoite-main
+image-version: latest
+
+modules:
+  - from-file: common-modules.yml
+
+  - type: rpm-ostree
+    install:
+      - libadwaita-qt5
+      - libadwaita-qt6
+      - plasma-wallpapers-dynamic

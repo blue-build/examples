@@ -1,0 +1,18 @@
+modules:
+  - type: rpm-ostree
+    install:
+      - micro
+      - zsh
+      - playerctl 
+    remove:
+      - firefox
+      - firefox-langpacks
+
+  - type: default-flatpaks
+    user:
+      install:
+        - org.mozilla.firefox
+        - org.kde.krita
+        - com.discordapp.Discord
+
+  - type: signing 
