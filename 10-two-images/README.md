@@ -1,6 +1,8 @@
-# Minimal example
+# Multiple images example
 
-This example showcases how streamlined a very minimal configuration could be by omitting configuration options.
+This example showcases a setup with a small amount of differing images with mostly the same content.
 
-- [recipe.yml](./recipes/recipe.yml)
+- [recipe-gnome.yml](./recipes/recipe-gnome.yml)
+- [recipe-kde.yml](./recipes/recipe-kde.yml)
+- [common-modules.yml](./recipes/common-modules.yml)
 - [build.yml](./build.yml)
