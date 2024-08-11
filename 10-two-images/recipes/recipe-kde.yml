@@ -1,4 +1,4 @@
-name: example/two-images-kde
+name: example/two-images/kde
 description: bluebuild example image
 base-image: ghcr.io/ublue-os/kinoite-main
 image-version: latest

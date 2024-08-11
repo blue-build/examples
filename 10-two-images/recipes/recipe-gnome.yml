@@ -1,4 +1,4 @@
-name: example/two-images-gnome
+name: example/two-images/gnome
 description: bluebuild example image
 base-image: ghcr.io/ublue-os/kinoite-main
 image-version: latest
