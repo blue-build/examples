@@ -32,7 +32,7 @@ jobs:
     steps:
        # the build is fully handled by the reusable github action
       - name: Build Custom Image
-        uses: blue-build/github-action@working-directory
+        uses: blue-build/github-action
         with:
           recipe: ${{ matrix.recipe.file }}
           working_directory: ${{ matrix.recipe.folder }}
