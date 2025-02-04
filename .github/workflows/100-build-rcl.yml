@@ -1,0 +1,65 @@
+name: bluebuild
+on:
+  push:
+    paths-ignore: # don't rebuild if only documentation has changed
+      - "**.md"
+
+  pull_request:
+  workflow_dispatch: # allow manually triggering builds
+jobs:
+  rcl:
+    name: Build recipe files with rcl
+    runs-on: ubuntu-latest
+    outputs:
+      recipe-matrix: ${{ steps.rcl.outputs.recipe-matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install rcl
+        run: |
+          git clone https://github.com/ruuda/rcl.git /tmp/rcl
+          cd /tmp/rcl && cargo build --release
+          sudo cp target/release/rcl /usr/local/bin/
+
+      - name: Build recipe files
+        id: rcl
+        run: |
+          RCL_OUTPUT=$(rcl build ./100-rcl/recipes.rcl)
+          RECIPE_FILENAMES=$(echo "$RCL_OUTPUT" | awk '{ print $2 }' | sed -e 's/^recipes\///')
+          RECIPE_FILENAMES_JSON=$(echo "$RECIPE_FILENAMES" | jq --compact-output --raw-input '[inputs]')
+          MATRIX_JSON=$(jq -cn --argjson recipes "${RECIPE_FILENAMES_JSON[@]}" '{ recipes: $recipes }')
+
+          echo "recipe-matrix=$MATRIX_JSON" >> $GITHUB_OUTPUT
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: recipes
+          path: ./100-rcl/recipes/
+  bluebuild:
+    name: Build Custom Image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    needs: rcl
+    strategy:
+      fail-fast: false # stop GH from cancelling all matrix builds if one fails
+      matrix: ${{ fromJson(needs.rcl.outputs.recipe-matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: recipes
+          path: ./100-rcl/recipes/
+
+      - name: Build Custom Image
+        uses: blue-build/github-action@v1.8
+        with:
+          recipe: ${{ matrix.recipe }}
+          working_directory: ./100-rcl
+          cosign_private_key: ${{ secrets.SIGNING_SECRET }}
+          registry_token: ${{ github.token }}
+          pr_event_number: ${{ github.event.number }}
+          skip_checkout: true

@@ -1,0 +1,66 @@
+let project = {
+    name = "test",
+    description = "My test project.",
+    base-images = "ghcr.io/ublue-os"
+};
+
+let gts-version = 40;
+
+{
+    for base-image in ["kinoite", "silverblue"]:
+    for nvidia in [true, false]:
+    for image-version in [gts-version, "latest"]:
+
+    let nvidia-suffix = if nvidia: "-nvidia" else: "";
+
+    f"recipes/recipe-{base-image}{nvidia-suffix}-{image-version}.yml": {
+        format = "json",
+        contents = {
+            name = f"{project.name}-{base-image}{nvidia-suffix}",
+            description =
+                f"""
+                {project.description}
+                ({base-image}{nvidia-suffix} edition, {if image-version == gts-version: "GTS" else "latest"} version)
+                """,
+            
+            base-image = f"{project.base-images}/{base-image}{nvidia-suffix}",
+            image-version = image-version,
+
+            if image-version == gts-version:
+                alt-tags = [
+                    "gts"
+                ],
+            
+            modules = [
+                {
+                    type = "files",
+                    files = [
+                        {
+                            source = "system",
+                            destination = "/",
+                        },
+                        if nvidia:
+                        {
+                            source = "system_nvidia",
+                            destination = "/",
+                        }
+                    ]
+                },
+                {
+                    type = "default-flatpaks",
+                    user = {
+                        install = [
+                            "org.kde.krita",
+                            "org.fedoraproject.MediaWriter"
+                        ]
+                    }
+                },
+                if nvidia: {
+                    type = "script",
+                    script = "nvidia-setup.sh"
+                },
+                { type = "signing" }
+            ]
+        }
+    }
+}
