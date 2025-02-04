@@ -1,9 +1,13 @@
 name: bluebuild
 on:
   push:
-    paths-ignore: # don't rebuild if only documentation has changed
-      - "**.md"
-      
+    paths:
+      - "00-minimal/**"
+      - "10-two-images/**"
+      - ".github/workflows/build-simple.yml"
+    branches:
+      - main
+
   pull_request:
   workflow_dispatch: # allow manually triggering builds
 jobs:
@@ -18,7 +22,6 @@ jobs:
       fail-fast: false # stop GH from cancelling all matrix builds if one fails
       matrix:
         recipe:
-
           # 00-minimal
           - folder: ./00-minimal
             file: recipe.yml
@@ -30,7 +33,7 @@ jobs:
             file: recipe-kde.yml
 
     steps:
-       # the build is fully handled by the reusable github action
+      # the build is fully handled by the reusable github action
       - name: Build Custom Image
         uses: blue-build/github-action@v1.6
         with:
