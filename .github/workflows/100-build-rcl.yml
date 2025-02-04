@@ -1,8 +1,11 @@
 name: bluebuild
 on:
   push:
-    paths-ignore: # don't rebuild if only documentation has changed
-      - "**.md"
+    paths:
+      - "100-rcl/**"
+      - ".github/workflows/100-build-rcl.yml"
+    branches:
+      - main
 
   pull_request:
   workflow_dispatch: # allow manually triggering builds
